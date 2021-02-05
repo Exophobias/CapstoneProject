@@ -10,13 +10,13 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // Parse requests of content-type - application/json
 app.use(bodyParser.json())
 
-// Configuring the database
+// Database configuration
 const dbConfig = require('./config/db.config.js');
 const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-// Connecting to the database
+// Database connection
 mongoose.connect(dbConfig.url, {
     useNewUrlParser: true
 }).then(() => {
@@ -30,6 +30,9 @@ mongoose.connect(dbConfig.url, {
 app.get('/', (req, res) => {
     res.json({"message": "Welcome to Simple Checkers. Play a round or two!"});
 });
+
+// Require routes
+require('./app/routes/checkers.routes.js')(app);
 
 // Listen for requests
 app.listen(80, () => {
