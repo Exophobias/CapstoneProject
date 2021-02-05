@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const NoteSchema = mongoose.Schema({
+const checkers = mongoose.Schema({
     Player1: String,
     Player2: String,
     Winner: String
