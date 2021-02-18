@@ -1,22 +1,22 @@
-const Note = require('../models/note.model.js');
+const History = require('../models/save.model.js');
 
 // Create and Save a new Note
 exports.create = (req, res) => {
     // Validate request
-    if(!req.body.content) {
+    if(!req.body.winner) {
         return res.status(400).send({
-            message: "Game history content can not be empty"
+            message: "Player1, Player2, and a Winner must be specified."
         });
     }
 
-    // Create a Note
+    // Create a game-history record
     const history = new History({
-        Player1: req.body.player1, 
+        Player1: req.body.Player1, 
         Player2: req.body.Player2,
         Winner: req.body.Winner
     });
 
-    // Save Note in the database
+    // Save record to the database
     history.save()
     .then(data => {
         res.send(data);
@@ -37,19 +37,4 @@ exports.findAll = (req, res) => {
             message: err.message || "Some error occurred while retrieving game history."
         });
     });
-};
-
-// Find a single note with a noteId
-exports.findOne = (req, res) => {
-
-};
-
-// Update a note identified by the noteId in the request
-exports.update = (req, res) => {
-
-};
-
-// Delete a note with the specified noteId in the request
-exports.delete = (req, res) => {
-
 };
