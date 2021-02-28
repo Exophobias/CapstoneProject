@@ -1,2 +1,4 @@
 # CLC Capstone Project - Checkers
-Ryan's CLC 11B (Capstone) Project. 
+CLC 11B (Capstone) Project. 
+
+Completion Deadline: April 7, 2021
