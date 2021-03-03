@@ -1,5 +1,8 @@
+// "node server.js" - Runs the Express app and allows you to connect to the localhost site
+
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 // Creates the express app
 const app = express();
@@ -28,7 +31,8 @@ mongoose.connect(dbConfig.url, {
 
 // Defines a simple route
 app.get('/', (req, res) => {
-    res.json({"message": "Welcome to Simple Checkers. Play a round or two!"});
+    //res.json({"message": "Welcome to Simple Checkers. Play a round or two!"});
+    res.sendFile(path.join(__dirname+'/index.html'));
 });
 
 // Require routes

@@ -1,0 +1,92 @@
+/* Removes the white border around the banner picture */
+body {
+    padding: 0px;
+    margin: 0px;
+}
+
+/* Style of the background banner */
+header {
+    min-height: 100vh;
+    height: 100%;
+    background-image: url("../img/banner.jpg");
+    background-size: cover;
+    margin: 0px;
+    padding: 0px;
+}
+
+footer {
+  background-color: #1F2229;
+  color: white;
+  min-height: 3em;
+  display: flex;
+  justify-content: space-between;
+}
+
+/*
+Style that controls the text of MKM Woodworking on the banner
+This is a temporary style and feature until the official logo is made.
+*/
+.header h1 {
+  font-family: "Brush Script MT";
+  font-size: 3em;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 34vh;
+}
+
+/* Style that controls the position of the logo on the banner */
+.header img {
+  width: 300px;
+  text-align: center;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.bkgwrapper {
+  padding: 0;
+  margin: 0;
+  background-image: url("../img/full-background.jpg");
+  background-attachment: fixed;
+}
+
+/* Style inputs with type="text", select elements and textareas */
+input[type=text], select, textarea {
+    width: 100%; /* Full width */
+    padding: 1em; /* Some padding */ 
+    border: 1px solid #ccc; /* Gray border */
+    border-radius: 4px; /* Rounded borders */
+    box-sizing: border-box; /* Make sure that padding and width stays in place */
+    margin-top: 1em; /* Add a top margin */
+    margin-bottom: 1.6em; /* Bottom margin */
+    resize: vertical /* Allow the user to vertically resize the textarea (not horizontally) */
+  }
+  
+  .contactform {
+    border-radius: 5px;
+    padding-right: 35em;
+    padding-left: 35em;
+    padding-top: 6em;
+    padding-bottom: 6em;
+  }
+
+  #submitbutton {
+      height: 35px;
+      width: 90px;
+  }
+
+  .aboutsection {
+    background-color: white;
+    font-size: 20px;
+    min-height: 26em;
+    display: flex;
+    align-items: center;
+  }
+
+  p {
+    margin: 0;
+    text-align: center;
+    min-width: 100%;
+  }
