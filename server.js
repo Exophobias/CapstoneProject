@@ -32,7 +32,7 @@ mongoose.connect(dbConfig.url, {
 // Defines a simple route
 app.get('/', (req, res) => {
     //res.json({"message": "Welcome to Simple Checkers. Play a round or two!"});
-    res.sendFile(path.join(__dirname+'/index.html'));
+    res.sendFile(path.join(__dirname+'/public/index.html'));
 });
 
 // Require routes
