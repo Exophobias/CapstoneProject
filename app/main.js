@@ -63,6 +63,28 @@ window.onload = function() {
         tilesElement = $('div.tiles');
         dictionary: ["0vmin", "10vmin", "20vmin", "30vmin", "40vmin", "50vmin", "60vmin", "70vmin", "80vmin", "90vmin"],
 
+        //
+        function initialize() {
+            var countPieces = 0;
+        var countTiles = 0;
+        for (let row in this.board) { //row is the index
+            for (let column in this.board[row]) { //column is the index
+            //whole set of if statements control where the tiles and pieces should be placed on the board
+            if (row > 0) {
+                if (column % 2 == 0)
+                    countTiles = this.tileRender(row, column, countTiles)
+            } else {
+                if (column % 2 > 0)
+                    countTiles = this.tileRender(row, column, countTiles)
+            }
+
+            this.board[row][column] < 13 ?
+            countPieces = this.playerPiecesRender(1, row, column, countPieces) :
+            countPieces = this.playerPiecesRender(2, row, column, countPieces)
+            }
+        }
+    }
+
         // This populates the elements within the index.html 
         function tileRender(row, column, countTiles) {
             this.tilesElement.append("<div class='tile' id='tile" + countTiles + "' style='top:" + this.dictionary[row] + ";left:" + this.dictionary[column] + ";'></div>");
@@ -97,7 +119,7 @@ window.onload = function() {
             }
         }
 
-
+    Board.initialize();
 
     }
 }
