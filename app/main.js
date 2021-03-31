@@ -46,61 +46,69 @@ window.onload = function() {
 
 
         }
+    }
 
+    function Tile(element, position) {
 
+        // Linked DOM (HTML) Element
+        this.element = element;
+
+        // Gameboard is a 2-D array. Format is row #, then column position. Ex. [0][1]
+        this.position = position;
     }
 
     // Controls the logistics and of the game
-    function Board() {
+    var Board = {
 
-        board: gameBoard // Maps board to gameBoard object
+        board: gameBoard, // Maps board to gameBoard object
         score: {
-            player1: 0
+            player1: 0,
             player2: 0
-        }
-        playerTurn = 1;
-        jumpexist = false;
-        tilesElement = $('div.tiles');
+        },
+        playerTurn: 1,
+        jumpexist: false,
+        tilesElement: $('div.tiles'),
         dictionary: ["0vmin", "10vmin", "20vmin", "30vmin", "40vmin", "50vmin", "60vmin", "70vmin", "80vmin", "90vmin"],
 
-        //
-        function initialize() {
+        // Initialize the 8x8 gameboard 
+        initialize: function() {
+            console.log("Start of Initialize Function")
             var countPieces = 0;
-        var countTiles = 0;
-        for (let row in this.board) { //row is the index
-            for (let column in this.board[row]) { //column is the index
-            //whole set of if statements control where the tiles and pieces should be placed on the board
-            if (row > 0) {
-                if (column % 2 == 0)
+            var countTiles = 0;
+            for (let row in this.board) { // Row (x) is the first index [x]
+                for (let column in this.board[row]) { // Column (y) is the second index [][y]
+                //whole set of if statements control where the tiles and pieces should be placed on the board
+                if (row % 2 == 1) {
+                    if (column % 2 == 0)
+                        countTiles = this.tileRender(row, column, countTiles)
+                } else {
+                    if (column % 2 == 1) 
                     countTiles = this.tileRender(row, column, countTiles)
-            } else {
-                if (column % 2 > 0)
-                    countTiles = this.tileRender(row, column, countTiles)
+                }
+                this.board[row][column] < 13 && this.board[row][column] > 0 ?
+                countPieces = this.renderPlayerPieces(1, row, column, countPieces) :
+                countPieces = this.renderPlayerPieces(2, row, column, countPieces)
+                }
             }
+            console.log("End of Intialize Loop Function")
+        },
 
-            this.board[row][column] < 13 ?
-            countPieces = this.playerPiecesRender(1, row, column, countPieces) :
-            countPieces = this.playerPiecesRender(2, row, column, countPieces)
-            }
-        }
-    }
-
-        // This populates the elements within the index.html 
-        function tileRender(row, column, countTiles) {
+        // This populates the tile HTML elements within the index.html 
+        tileRender: function(row, column, countTiles) {
             this.tilesElement.append("<div class='tile' id='tile" + countTiles + "' style='top:" + this.dictionary[row] + ";left:" + this.dictionary[column] + ";'></div>");
             tiles[countTiles] = new Tile($("#tile" + countTiles), [parseInt(row), parseInt(column)]);
             return countTiles + 1
-        }
+        },
 
-        // 
-        function renderPlayerPieces(playerNumber, row, column, countPieces) {
+        // Populates the player HTML elements
+        renderPlayerPieces: function(playerNumber, row, column, countPieces) {
             $(`.player${playerNumber}pieces`).append("<div class='piece' id='" + countPieces + "' style='top:" + this.dictionary[row] + ";left:" + this.dictionary[column] + ";'></div>");
             pieces[countPieces] = new Piece($("#" + countPieces), [parseInt(row), parseInt(column)]);
             return countPieces + 1;
-          }
+          },
 
         // Checks if location (tile) has an object (piece) in that location
-        function isValidMove(row, column) {
+        isValidMove: function(row, column) {
             // Check if row and column is within boundss of the gameboard
             if (row < 0 || row > 7 || column < 0 || column > 7)
                 return false;
@@ -109,17 +117,13 @@ window.onload = function() {
             if (this.board[row][column] == 0)
                 return true;
             return false;
+        },
+
+        changePlayerTurn: function() {
+            this.playerTurn == 1 ?
+            this.playerTurn = 2 :
+            this.playerTurn = 1
         }
-
-        function changePlayerTurn() {
-            if (this.playerTurn == 1) {
-                this.playerTurn = 2
-            } else {
-                this.playerTurn = 1
-            }
-        }
-
-    Board.initialize();
-
     }
+    Board.initialize();
 }
