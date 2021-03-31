@@ -70,9 +70,8 @@ window.onload = function() {
         tilesElement: $('div.tiles'),
         dictionary: ["0vmin", "10vmin", "20vmin", "30vmin", "40vmin", "50vmin", "60vmin", "70vmin", "80vmin", "90vmin"],
 
-        // Initialize the 8x8 gameboard 
+        // Initialize the 8x8 gameBoard in the HTML 
         initialize: function() {
-            console.log("Start of Initialize Function")
             var countPieces = 0;
             var countTiles = 0;
             for (let row in this.board) { // Row (x) is the first index [x]
@@ -98,14 +97,14 @@ window.onload = function() {
             }
         },
 
-        // This populates the tile HTML elements within the index.html 
+        // This populates the tile HTML elements within the index.html. Called in initialize function
         tileRender: function(row, column, countTiles) {
             this.tilesElement.append("<div class='tile' id='tile" + countTiles + "' style='top:" + this.dictionary[row] + ";left:" + this.dictionary[column] + ";'></div>");
             tiles[countTiles] = new Tile($("#tile" + countTiles), [parseInt(row), parseInt(column)]);
             return countTiles + 1
         },
 
-        // Populates the player HTML elements
+        // Populates the player HTML elements based on player number given. Called in initialize function
         renderPlayerPieces: function(playerNumber, row, column, countPieces) {
             $(`.player${playerNumber}pieces`).append("<div class='piece' id='" + countPieces + "' style='top:" + this.dictionary[row] + ";left:" + this.dictionary[column] + ";'></div>");
             pieces[countPieces] = new Piece($("#" + countPieces), [parseInt(row), parseInt(column)]);

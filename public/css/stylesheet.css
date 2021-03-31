@@ -1,1 +1,5 @@
-
+board .tile {
+  width: 10vmin;
+  height: 10vmin;
+  position: absolute;
+  background-color: #232621; }
