@@ -48,6 +48,8 @@ window.onload = function() {
         }
     }
 
+    // Creates a tile object for all black pieces on the board. (32 total)
+    // All peices can only move on the black as they can only move diagonally 
     function Tile(element, position) {
 
         // Linked DOM (HTML) Element
@@ -123,6 +125,7 @@ window.onload = function() {
             return false;
         },
 
+        // Change player turn using if-else statement
         changePlayerTurn: function() {
             this.playerTurn == 1 ?
             this.playerTurn = 2 :
