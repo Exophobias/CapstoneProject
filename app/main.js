@@ -77,20 +77,25 @@ window.onload = function() {
             var countTiles = 0;
             for (let row in this.board) { // Row (x) is the first index [x]
                 for (let column in this.board[row]) { // Column (y) is the second index [][y]
-                //whole set of if statements control where the tiles and pieces should be placed on the board
+                
+                // Grabs the row and mod divides it, if it == 1 and then the column == 1, then there is
+                // a row and column intersection. At that intersection, a zero will be there. (Non piece)
                 if (row % 2 == 1) {
                     if (column % 2 == 0)
                         countTiles = this.tileRender(row, column, countTiles)
                 } else {
                     if (column % 2 == 1) 
-                    countTiles = this.tileRender(row, column, countTiles)
+                        countTiles = this.tileRender(row, column, countTiles)
                 }
-                this.board[row][column] < 13 && this.board[row][column] > 0 ?
-                countPieces = this.renderPlayerPieces(1, row, column, countPieces) :
-                countPieces = this.renderPlayerPieces(2, row, column, countPieces)
+
+                // If [x][y] does not equal 0 and is below 13 (1-12), then its a player 1 piece
+                // The same but if the value at [x][y] is above 12, then its a player 2 piece
+                if (this.board[row][column] > 0 && this.board[row][column] < 13)
+                    countPieces = this.renderPlayerPieces(1, row, column, countPieces)
+                else if (this.board[row][column] > 0 && 12 < this.board[row][column] < 25)
+                    countPieces = this.renderPlayerPieces(2, row, column, countPieces)
                 }
             }
-            console.log("End of Intialize Loop Function")
         },
 
         // This populates the tile HTML elements within the index.html 
