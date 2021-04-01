@@ -3,6 +3,19 @@ body {
   background-color: #362108;
 }
 
+div.scoreboard {
+  position: absolute;
+  top: calc(50% - 20vmin);
+  left: calc(10%);
+  width: 40vmin;
+  height: 10vmin;
+  display: flex;
+}
+
+div.scoreboard#player1 {
+  margin-left: 3vmin;
+}
+
 /* Sets the board size (80vmin) which is required due to the way that the pieces are rendered,
 the background color sets the red squares which pieces cannot go into and the top/left sets the location of the board */
 #board {
