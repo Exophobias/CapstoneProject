@@ -1,4 +1,23 @@
-board .tile {
+/* This controls overall look of the site such as background colour. */
+body {
+  background-color: #362108;
+}
+
+/* Sets the board size (80vmin) which is required due to the way that the pieces are rendered,
+the background color sets the red squares which pieces cannot go into and the top/left sets the location of the board */
+#board {
+  position: absolute;
+  top: calc(50% - 40vmin);
+  left: calc(60% - 40vmin);
+  width: 80vmin;
+  height: 80vmin;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px #232621;
+  background-color: #e05061;
+  overflow: hidden; }
+
+/* This sets the size of the black squares and its color.*/
+#board .tile {
   width: 10vmin;
   height: 10vmin;
   position: absolute;
