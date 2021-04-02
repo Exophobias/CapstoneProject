@@ -35,3 +35,33 @@ the background color sets the red squares which pieces cannot go into and the to
   height: 10vmin;
   position: absolute;
   background-color: #232621; }
+
+#board .player1pieces .piece {
+  position: absolute;
+  width: 8vmin;
+  height: 8vmin;
+  background-color: red;
+  border-radius: 6vmin;
+  margin-top: 1vmin;
+  margin-left: 1vmin;
+  cursor: pointer;
+}
+
+div.pieces .player1pieces.selected {
+
+}
+
+#board .player2pieces .piece {
+  position: absolute;
+  width: 8vmin;
+  height: 8vmin;
+  background-color: black;
+  border-radius: 6vmin;
+  margin-top: 1vmin;
+  margin-left: 1vmin;
+  cursor: pointer;
+}
+
+div.pieces .player2pieces.selected {
+  
+}

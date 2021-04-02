@@ -115,11 +115,12 @@ window.onload = function() {
 
         // Checks if location (tile) has an object (piece) in that location
         isValidMove: function(row, column) {
-            // Check if row and column is within boundss of the gameboard
+            // Check if row and column is within bounds of the gameboard
             if (row < 0 || row > 7 || column < 0 || column > 7)
                 return false;
             
             // If location in 2D array == 0, then no piece is there. Valid move
+            // If the location is > 0, then that means there is a piece there. Not a valid move.
             if (this.board[row][column] == 0)
                 return true;
             return false;
@@ -133,4 +134,12 @@ window.onload = function() {
         }
     }
     Board.initialize();
+
+    $('.piece').on("click", function () {
+        var selected;
+        $('.piece').on("click" = selected;
+        
+        //if (pieces[$(this).attr("id").allowedToMove])
+
+    });
 }
