@@ -47,8 +47,8 @@ the background color sets the red squares which pieces cannot go into and the to
   cursor: pointer;
 }
 
-div.pieces .player1pieces.selected {
-
+div.pieces .player1pieces .selected {
+  background-color: rgb(216, 185, 10);
 }
 
 #board .player2pieces .piece {
@@ -62,6 +62,6 @@ div.pieces .player1pieces.selected {
   cursor: pointer;
 }
 
-div.pieces .player2pieces.selected {
+div.pieces .player2pieces .selected {
   
 }

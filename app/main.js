@@ -17,6 +17,11 @@ window.onload = function() {
     var pieces = [];
     var tiles = [];
 
+    // Initial player turn. Changes to other player on valid move
+    playerTurn = 1;
+    lastPlayerTurn = 2;
+    isAnySelected = false;
+
     // Piece Object - 24 total pieces (instances) in the game (12 per side)
     // Includes functions for possible/valid moves, makeKing, etc.
     function Piece(element, position) {
@@ -24,7 +29,7 @@ window.onload = function() {
         // Linked DOM (HTML) Element
         this.element = element;
 
-        // Gameboard is a 2-D array. Format is row #, then column position. Ex. [0][1]
+        // Gameboard is a 2-D array. Format is row #, then column #. Ex. [0][7] = 4
         this.position = position;
 
         // Which player's piece?
@@ -42,9 +47,27 @@ window.onload = function() {
         else
             this.player = 2;
 
-        function move(tile) {
+        this.move = function(tile) {
 
+            // This makes sure that the player is going in the correct direction if the piece
+            // is not a king.
+            if (Board.isValidPlacetoMove(tile.position[0], tile.position[1]) = false) 
+                return false;
+            
+            if (this.player == 1 && this.king == false) {
+                if (tile.position[0] < this.position[0]) 
+                    return false;
+            } else if (this.player == 2 && this.king == false) {
+                 if (tile.position[0] > this.position[0]) 
+                    return false;
+            }
 
+            Board.board[this.position[0]][this.position[1]] = 0;
+            Board.board[tile.position[0]][tile.position[1]] = this.player;
+            this.position = [tile.position[0], tile.position[1]];
+            //change the css using board's dictionary
+            this.element.css('top', Board.dictionary[this.position[0]]);
+            this.element.css('left', Board.dictionary[this.position[1]]);
         }
     }
 
@@ -67,7 +90,6 @@ window.onload = function() {
             player1: 0,
             player2: 0
         },
-        playerTurn: 1,
         jumpexist: false,
         tilesElement: $('div.tiles'),
         dictionary: ["0vmin", "10vmin", "20vmin", "30vmin", "40vmin", "50vmin", "60vmin", "70vmin", "80vmin", "90vmin"],
@@ -128,18 +150,53 @@ window.onload = function() {
 
         // Change player turn using if-else statement
         changePlayerTurn: function() {
-            this.playerTurn == 1 ?
-            this.playerTurn = 2 :
-            this.playerTurn = 1
+            if (this.playerTurn == 1) {
+                this.playerTurn = 2
+                lastPlayerTurn = 1 
+            } else {
+                this.playerTurn = 1
+            }
+        },
+
+        checkForJump: function() {
+
         }
     }
+
     Board.initialize();
 
+    // Depending on players turn, will set the piece to selected if its their turn
     $('.piece').on("click", function () {
-        var selected;
-        $('.piece').on("click" = selected;
-        
-        //if (pieces[$(this).attr("id").allowedToMove])
 
+        if (playerTurn != lastPlayerTurn) {
+
+            // If piece with ID "id" and boolean allowedToMove = true, then ...
+            if (pieces[$(this).attr("id")].allowedToMove) {
+
+                console.log(isAnySelected);
+
+                if (!isAnySelected) {
+                    $(this).addClass('selected');
+                    return isAnySelected = true;
+                }
+
+                if (isAnySelected && $(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                    return isAnySelected = false;
+                }
+            }
+        }
+    });
+
+    $('.tile').on("click", function () {
+
+        // When tile is clicked, returns tile[#id], then replaces "tile" with "" to just give ID
+        tileID = $(this).attr("id").replace("tile","");
+
+        // This assigns the variable selectedTile to the specific Tile object that was clicked.
+        selectedTile = tiles[tileID];
+
+        console.log($(this).attr("id"))
+        console.log(selectedTile);
     });
 }
