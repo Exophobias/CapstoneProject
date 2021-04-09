@@ -175,11 +175,15 @@ window.onload = function() {
 
                 console.log(isAnySelected);
 
+                // If no piece is selected. Add selected and make the boolean variable true
                 if (!isAnySelected) {
                     $(this).addClass('selected');
                     return isAnySelected = true;
                 }
 
+                // If boolean variable is true, something is selected. If the piece clicked
+                // also has selected at end of it. Remove it. If neither if statements are true
+                // Nothing will happen.
                 if (isAnySelected && $(this).hasClass('selected')) {
                     $(this).removeClass('selected');
                     return isAnySelected = false;
