@@ -51,21 +51,30 @@ window.onload = function() {
 
             // This makes sure that the player is going in the correct direction if the piece
             // is not a king.
-            if (Board.isValidPlacetoMove(tile.position[0], tile.position[1]) = false) 
+            if (Board.isValidMove(tile.position[0], !tile.position[1])) 
                 return false;
             
-            if (this.player == 1 && this.king == false) {
+            // This makes sure the move is valid if the piece is not a king
+            if (this.player == 1 && !this.king) {
+                // If tile row # is less than its current position's row # and its NOT a king. Its not allowed to move backwards
                 if (tile.position[0] < this.position[0]) 
                     return false;
-            } else if (this.player == 2 && this.king == false) {
+            } else if (this.player == 2 && !this.king) {
+                // If tile row # is greater than its current position's row # and its NOT a king. Its not allowed to move backwards
                  if (tile.position[0] > this.position[0]) 
                     return false;
             }
 
+            // Sets the position in the 2D array to zero (= 0) so that the spot is now empty
             Board.board[this.position[0]][this.position[1]] = 0;
-            Board.board[tile.position[0]][tile.position[1]] = this.player;
+
+            // Sets the location in the 2D array to the ID of the piece 
+            Board.board[tile.position[0]][tile.position[1]] = $(this).attr("id");
+
+            // Thisa sets the position variable in the Piece object to the new position, that of the tile
             this.position = [tile.position[0], tile.position[1]];
-            //change the css using board's dictionary
+            
+            //This changes the css using board's dictionary
             this.element.css('top', Board.dictionary[this.position[0]]);
             this.element.css('left', Board.dictionary[this.position[1]]);
         }
@@ -173,8 +182,6 @@ window.onload = function() {
             // If piece with ID "id" and boolean allowedToMove = true, then ...
             if (pieces[$(this).attr("id")].allowedToMove) {
 
-                console.log(isAnySelected);
-
                 // If no piece is selected. Add selected and make the boolean variable true
                 if (!isAnySelected) {
                     $(this).addClass('selected');
@@ -200,7 +207,10 @@ window.onload = function() {
         // This assigns the variable selectedTile to the specific Tile object that was clicked.
         selectedTile = tiles[tileID];
 
-        console.log($(this).attr("id"))
-        console.log(selectedTile);
+        // This sets local variable piece to Piece object of the selected piece (Grab the id attribute)
+        var piece = pieces[$('.selected').attr("id")];
+
+        piece.move(selectedTile)
+
     });
 }
