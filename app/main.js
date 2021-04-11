@@ -47,7 +47,11 @@ window.onload = function() {
         else
             this.player = 2;
 
-        this.move = function(tile) {
+        this.makePieceKing = function() {
+            this.king = true;
+        }
+
+        this.move = function(tile, pieceID) {
 
             // This makes sure that the player is going in the correct direction if the piece
             // is not a king.
@@ -56,12 +60,14 @@ window.onload = function() {
             
             // This makes sure the move is valid if the piece is not a king
             if (this.player == 1 && !this.king) {
-                // If tile row # is less than its current position's row # and its NOT a king. Its not allowed to move backwards
-                if (tile.position[0] < this.position[0]) 
+                // If tile row # is less than or equal to its current position's row # and its NOT a king OR if the row number is greater than current row + 1
+                // * Its not allowed to move backwards and is cannot move more than 1 row down
+                if (tile.position[0] <= this.position[0] || tile.position[0] > [this.position[0] + 1]) 
                     return false;
             } else if (this.player == 2 && !this.king) {
-                // If tile row # is greater than its current position's row # and its NOT a king. Its not allowed to move backwards
-                 if (tile.position[0] > this.position[0]) 
+                // If tile row # is greater or equal to than its current position's row # and its NOT a king OR if the row number is greater than current row - 1
+                // * Its not allowed to move backwards and it cannot move more than 1 row up
+                 if (tile.position[0] >= this.position[0] || tile.position[0] < [this.position[0] - 1]) 
                     return false;
             }
 
@@ -69,7 +75,7 @@ window.onload = function() {
             Board.board[this.position[0]][this.position[1]] = 0;
 
             // Sets the location in the 2D array to the ID of the piece 
-            Board.board[tile.position[0]][tile.position[1]] = $(this).attr("id");
+            Board.board[tile.position[0]][tile.position[1]] = pieceID;
 
             // Thisa sets the position variable in the Piece object to the new position, that of the tile
             this.position = [tile.position[0], tile.position[1]];
@@ -77,6 +83,45 @@ window.onload = function() {
             //This changes the css using board's dictionary
             this.element.css('top', Board.dictionary[this.position[0]]);
             this.element.css('left', Board.dictionary[this.position[1]]);
+
+            if (!this.king && this.player == 1 && this.position[0] == 7)
+                this.makePieceKing
+
+            if (!this.king && this.player == 2 && this.position[0] == 0)
+                this.makePieceKing
+        }
+
+        this.canJump = function(newPos) {
+
+            // Checks to make sure new position is within bounds of gameboard
+            if (newPos.position[0] < 0 || newPos.position[0] > 7 || newPos.position[1] < 0 || newPos.position[1] > 7)
+                return false;
+
+
+            // This makes sure the move is valid if the piece is not a king (cannot move backwards)
+            if (newPos.player == 1 && !newPos.king) {
+                // If tile row # is less than its current position's row # and its NOT a king. Its not allowed to move backwards
+                console.log("Check #2")
+                if (newPos.position[0] <= this.position[0]) 
+                    return false;
+                console.log("Check #3")
+            } else if (newPos.player == 2 && !newPos.king) {
+                // If tile row # is greater than its current position's row # and its NOT a king. Its not allowed to move backwards
+                 if (newPos.position[0] >= this.position[0]) 
+                    return false;
+            }
+
+            console.log("Poss Move: Row down 1, left 1 = [" + [newPos.position[0] + 1] + "][" + [newPos.position[1] - 1] + "]")
+            console.log("Poss Move: Row down 1, right 1 = [" + [newPos.position[0] + 1] + "][] " + [newPos.position[1] + 1] + "]")
+
+            if (gameBoard[newPos.position[0] + 1][newPos.position[1] - 1] > 0 || gameBoard[newPos.position[0] + 1][newPos.position[1] + 1] > 0) {
+                if (gameBoard[newPos.position[0] + 2][newPos.position[1] - 2] == 0 || gameBoard[newPos.position[0] + 2][newPos.position[1] + 2] == 0) {
+                    console.log("A jump is possible!")
+                    jumpexist = true;
+                }
+            }
+
+            //changePlayerTurn()
         }
     }
 
@@ -166,10 +211,6 @@ window.onload = function() {
                 this.playerTurn = 1
             }
         },
-
-        checkForJump: function() {
-
-        }
     }
 
     Board.initialize();
@@ -203,14 +244,17 @@ window.onload = function() {
 
         // When tile is clicked, returns tile[#id], then replaces "tile" with "" to just give ID
         tileID = $(this).attr("id").replace("tile","");
+        console.log("Tile ID = " + tileID)
 
         // This assigns the variable selectedTile to the specific Tile object that was clicked.
         selectedTile = tiles[tileID];
 
         // This sets local variable piece to Piece object of the selected piece (Grab the id attribute)
         var piece = pieces[$('.selected').attr("id")];
+        var pieceID = $('.selected').attr("id");
 
-        piece.move(selectedTile)
+        piece.move(selectedTile, pieceID)
+        piece.canJump(selectedTile)
 
     });
 }
