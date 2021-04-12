@@ -19,7 +19,6 @@ window.onload = function() {
 
     // Initial player turn. Changes to other player on valid move
     playerTurn = 1;
-    lastPlayerTurn = 2;
     isAnySelected = false;
 
     // Piece Object - 24 total pieces (instances) in the game (12 per side)
@@ -41,36 +40,44 @@ window.onload = function() {
         // Is the piece a king?
         this.isKing = false;
 
+        // Piece ID
+        this.id = 0;
+
         // Assigns HTML elements (checker pieces) based on HTML element ID
-        if(this.element.attr("id") < 13)
+        if(this.element.attr("id") <= 11)
             this.player = 1;
         else
             this.player = 2;
 
         this.makePieceKing = function() {
             this.king = true;
+            this.element.css("background-color", "purple")
         }
 
         this.move = function(tile, pieceID) {
 
             // This makes sure that the player is going in the correct direction if the piece
             // is not a king.
-            if (Board.isValidMove(tile.position[0], !tile.position[1])) 
+            if (Board.isValidMove(tile.position[0], !tile.position[1])) {
+                console.log("Not a valid move!")
                 return false;
+            }
             
+
+
             // This makes sure the move is valid if the piece is not a king
             if (this.player == 1 && !this.king) {
                 // If tile row # is less than or equal to its current position's row # and its NOT a king OR if the row number is greater than current row + 1
                 // * Its not allowed to move backwards and is cannot move more than 1 row down
-                if (tile.position[0] <= this.position[0] || tile.position[0] > [this.position[0] + 1]) 
+                if (tile.position[0] <= this.position[0] || tile.position[0] > [this.position[0] + 1] || tile.position[1] > [this.position[1] + 1] || tile.position[1] < [this.position[1] - 1]) 
                     return false;
             } else if (this.player == 2 && !this.king) {
                 // If tile row # is greater or equal to than its current position's row # and its NOT a king OR if the row number is greater than current row - 1
                 // * Its not allowed to move backwards and it cannot move more than 1 row up
-                 if (tile.position[0] >= this.position[0] || tile.position[0] < [this.position[0] - 1]) 
+                 if (tile.position[0] >= this.position[0] || tile.position[0] < [this.position[0] - 1] || tile.position[1] > [this.position[1] + 1] || tile.position[1] < [this.position[1] - 1]) 
                     return false;
             }
-
+        
             // Sets the position in the 2D array to zero (= 0) so that the spot is now empty
             Board.board[this.position[0]][this.position[1]] = 0;
 
@@ -84,44 +91,68 @@ window.onload = function() {
             this.element.css('top', Board.dictionary[this.position[0]]);
             this.element.css('left', Board.dictionary[this.position[1]]);
 
-            if (!this.king && this.player == 1 && this.position[0] == 7)
-                this.makePieceKing
-
-            if (!this.king && this.player == 2 && this.position[0] == 0)
-                this.makePieceKing
+            this.element.removeClass('selected');
+            isAnySelected = false
+            Board.changePlayerTurn();
+            this.doesJumpExist();
         }
 
-        this.canJump = function(newPos) {
+        this.canJump = function(newPos, selectedPieceID) {
 
-            // Checks to make sure new position is within bounds of gameboard
-            if (newPos.position[0] < 0 || newPos.position[0] > 7 || newPos.position[1] < 0 || newPos.position[1] > 7)
-                return false;
+            // if(selectedPieceID <= 11) {
+            //     console.log("Reg Move: Row down 1, left 1 = [" + [newPos.position[0] + 1] + "][" + [newPos.position[1] - 1] + "]")
+            //     console.log("Reg Move: Row down 1, right 1 = [" + [newPos.position[0] + 1] + "][" + [newPos.position[1] + 1] + "]")
+            //     console.log("Jump Location: Row down 2, left 2 = [" + [newPos.position[0] + 2] + "][" + [newPos.position[1] - 2] + "]")
+            //     console.log("Jump Location: Row down 2, right 2 = [" + [newPos.position[0] + 2] + "][" + [newPos.position[1] + 2] + "]")
+            // } else if (selectedPieceID >= 12) {
+            //     console.log("Reg Move: Row up 1, left 1 = [" + [newPos.position[0] - 1] + "][" + [newPos.position[1] - 1] + "]")
+            //     console.log("Reg Move: Row up 1, right 1 = [" + [newPos.position[0] - 1] + "][" + [newPos.position[1] + 1] + "]")
+            //     console.log("Jump Location: Row up 2, left 2 = [" + [newPos.position[0] - 2] + "][" + [newPos.position[1] - 2] + "]")
+            //     console.log("Jump Location: Row up 2, right 2 = [" + [newPos.position[0] - 2] + "][" + [newPos.position[1] + 2] + "]")
+            // }
 
-
-            // This makes sure the move is valid if the piece is not a king (cannot move backwards)
-            if (newPos.player == 1 && !newPos.king) {
-                // If tile row # is less than its current position's row # and its NOT a king. Its not allowed to move backwards
-                console.log("Check #2")
-                if (newPos.position[0] <= this.position[0]) 
-                    return false;
-                console.log("Check #3")
-            } else if (newPos.player == 2 && !newPos.king) {
-                // If tile row # is greater than its current position's row # and its NOT a king. Its not allowed to move backwards
-                 if (newPos.position[0] >= this.position[0]) 
-                    return false;
+            if (selectedPieceID <= 11) { // This checks for jumps for player 1 (Red) pieces by checking if the gameBoard location == 0
+                if (gameBoard[newPos.position[0] + 1][newPos.position[1] - 1] > 0 || gameBoard[newPos.position[0] + 1][newPos.position[1] + 1] > 0) {
+                    if (gameBoard[newPos.position[0] + 2][newPos.position[1] - 2] == 0 || gameBoard[newPos.position[0] + 2][newPos.position[1] + 2] == 0) {
+                        console.log("A jump is possible!")
+                        jumpExist = true;
+                        this.doesJumpExist();
+                        return true;
+                    }
+                }
+            } else if (selectedPieceID >= 12) { // This checks for jumps for player 2 (Black) pieces
+                if (gameBoard[newPos.position[0] - 1][newPos.position[1] - 1] > 0 || gameBoard[newPos.position[0] - 1][newPos.position[1] + 1] > 0) {
+                    if (gameBoard[newPos.position[0] - 2][newPos.position[1] - 2] == 0 || gameBoard[newPos.position[0] - 2][newPos.position[1] + 2] == 0) {
+                        console.log("A jump is possible!")
+                        jumpExist = true;
+                        this.doesJumpExist();
+                        return true;
+                    }
+                }
+            } else {
+                return true;
             }
+        }
 
-            console.log("Poss Move: Row down 1, left 1 = [" + [newPos.position[0] + 1] + "][" + [newPos.position[1] - 1] + "]")
-            console.log("Poss Move: Row down 1, right 1 = [" + [newPos.position[0] + 1] + "][] " + [newPos.position[1] + 1] + "]")
+        this.doesJumpExist = function() {
+            this.jumpExist = false
+            
+            // This iterates the [pieces] array which holds the Piece objects and sets all allowedToMove = false
+            for(let x of pieces) {
+                x.allowedToMove = false;
 
-            if (gameBoard[newPos.position[0] + 1][newPos.position[1] - 1] > 0 || gameBoard[newPos.position[0] + 1][newPos.position[1] + 1] > 0) {
-                if (gameBoard[newPos.position[0] + 2][newPos.position[1] - 2] == 0 || gameBoard[newPos.position[0] + 2][newPos.position[1] + 2] == 0) {
-                    console.log("A jump is possible!")
-                    jumpexist = true;
+                // As its iterating through the array of Piece objects, if it finds a piece that is able to
+                // jump. It will set only those pieces to be allowed to move.
+                if(x.canJump(x) && x.player != lastPlayerTurn) {
+                    this.jumpExist = true
+                    x.allowedToMove = true;
                 }
             }
 
-            //changePlayerTurn()
+            // If no jump exists, then set all pieces to move. (Regular move)
+            if(!this.jumpExist) 
+                for(let i of pieces)
+                    i.allowedToMove = true;
         }
     }
 
@@ -144,7 +175,7 @@ window.onload = function() {
             player1: 0,
             player2: 0
         },
-        jumpexist: false,
+        jumpExist: false,
         tilesElement: $('div.tiles'),
         dictionary: ["0vmin", "10vmin", "20vmin", "30vmin", "40vmin", "50vmin", "60vmin", "70vmin", "80vmin", "90vmin"],
 
@@ -167,9 +198,9 @@ window.onload = function() {
 
                 // If [x][y] does not equal 0 and is below 13 (1-12), then its a player 1 piece
                 // The same but if the value at [x][y] is above 12, then its a player 2 piece
-                if (this.board[row][column] > 0 && this.board[row][column] < 13)
+                if (this.board[row][column] > 0 && this.board[row][column] <=12)
                     countPieces = this.renderPlayerPieces(1, row, column, countPieces)
-                else if (this.board[row][column] > 0 && 12 < this.board[row][column] < 25)
+                else if (this.board[row][column] > 0 && this.board[row][column] >= 13)
                     countPieces = this.renderPlayerPieces(2, row, column, countPieces)
                 }
             }
@@ -186,6 +217,7 @@ window.onload = function() {
         renderPlayerPieces: function(playerNumber, row, column, countPieces) {
             $(`.player${playerNumber}pieces`).append("<div class='piece' id='" + countPieces + "' style='top:" + this.dictionary[row] + ";left:" + this.dictionary[column] + ";'></div>");
             pieces[countPieces] = new Piece($("#" + countPieces), [parseInt(row), parseInt(column)]);
+            id = countPieces;
             return countPieces + 1;
           },
 
@@ -204,22 +236,40 @@ window.onload = function() {
 
         // Change player turn using if-else statement
         changePlayerTurn: function() {
-            if (this.playerTurn == 1) {
-                this.playerTurn = 2
-                lastPlayerTurn = 1 
-            } else {
-                this.playerTurn = 1
-            }
-        },
+            playerTurn == 1 ?
+            playerTurn = 2 :
+            playerTurn = 1
+        }
     }
 
     Board.initialize();
 
-    // Depending on players turn, will set the piece to selected if its their turn
+    // Depending on players turn and the piece ID that is selected, 
+    // it will set the piece to selected. Onle one can be selected at a time.
     $('.piece').on("click", function () {
 
-        if (playerTurn != lastPlayerTurn) {
+        selectedPieceID = $(this).attr("id").replace("tile","")
+        console.log("Piece ID = " + selectedPieceID)
 
+        if (playerTurn == 1 && selectedPieceID <= 11) {
+            // If piece with ID "id" and boolean allowedToMove = true, then ... 
+            if (pieces[$(this).attr("id")].allowedToMove) {
+
+                // If no piece is selected. Add selected and make the boolean variable true
+                if (!isAnySelected) {
+                    $(this).addClass('selected');
+                    return isAnySelected = true;
+                }
+
+                // If boolean variable is true, something is selected. If the piece clicked
+                // also has selected at end of it. Remove it. If neither if statements are true
+                // Nothing will happen.
+                if (isAnySelected && $(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                    return isAnySelected = false;
+                }
+            }
+        } else if (playerTurn == 2 && selectedPieceID >= 12) {
             // If piece with ID "id" and boolean allowedToMove = true, then ...
             if (pieces[$(this).attr("id")].allowedToMove) {
 
@@ -248,13 +298,15 @@ window.onload = function() {
 
         // This assigns the variable selectedTile to the specific Tile object that was clicked.
         selectedTile = tiles[tileID];
+        console.log("New Array Location " + selectedTile.position)
 
         // This sets local variable piece to Piece object of the selected piece (Grab the id attribute)
         var piece = pieces[$('.selected').attr("id")];
         var pieceID = $('.selected').attr("id");
 
-        piece.move(selectedTile, pieceID)
-        piece.canJump(selectedTile)
+        // If the piece cannot jump, then its a reguar move
+        if (!piece.canJump(selectedTile, selectedPieceID))
+            piece.move(selectedTile, pieceID)
 
     });
 }
