@@ -257,10 +257,12 @@ window.onload = function() {
                     }
                 }
             } else if (pieceID >= 13 && !x.isKing) { // This checks for jumps for player 2 (Black) pieces
-                if (x.upLeft(1) <= 12 || x.upRight(1) <= 12) {
-                    if (x.upLeft(2) == 0 || x.upRight(2) == 0) {
-                        console.log("A jump is possible!")
-                        return true;
+                if (x.upLeft(1) < 0 || x.upRight(1) < 0) {
+                    if (x.upLeft(1) <= 12 || x.upRight(1) <= 12) {
+                        if (x.upLeft(2) == 0 || x.upRight(2) == 0) {
+                            console.log("A jump is possible!")
+                            return true;
+                        }
                     }
                 }
             } else {
@@ -286,11 +288,11 @@ window.onload = function() {
     $('.piece').on("click", function () {
 
         selectedPieceID = $(this).attr("id").replace("tile","")
-        //console.log("Piece ID = " + selectedPieceID)
+        console.log("Piece ID = " + selectedPieceID)
 
         if (playerTurn == 1 && selectedPieceID <= 11) {
             // If piece with ID "id" and boolean allowedToMove = true, then ... 
-            if (pieces[$(this).attr("id")].allowedToMove) {
+            if (pieces[(selectedPieceID)].allowedToMove) {
 
                 // If no piece is selected. Add selected and make the boolean variable true
                 if (!isAnySelected) {
@@ -308,7 +310,7 @@ window.onload = function() {
             }
         } else if (playerTurn == 2 && selectedPieceID >= 12) {
             // If piece with ID "id" and boolean allowedToMove = true, then ...
-            if (pieces[$(this).attr("id")].allowedToMove) {
+            if (pieces[(selectedPieceID)].allowedToMove) {
 
                 // If no piece is selected. Add selected and make the boolean variable true
                 if (!isAnySelected) {
