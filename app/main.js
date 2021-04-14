@@ -42,6 +42,8 @@ window.onload = function() {
         // Piece ID
         this.id = 0;
 
+        this.canBeRemoved = false
+
         // Assigns HTML elements (checker pieces) based on HTML element ID
         if(this.element.attr("id") <= 11)
             this.player = 1;
@@ -51,6 +53,27 @@ window.onload = function() {
         this.makePieceKing = function() {
             this.king = true;
             this.element.css("background-color", "purple")
+        }
+
+        this.remove = function () {
+            //remove it and delete it from the gameboard
+            if(this.canBeRemoved == true) {
+                this.element.css("display", "none");
+                Board.board[this.position[0]][this.position[1]] = 0;
+            }
+
+            if (this.player == 1) {
+              Board.score.player2 += 1;
+            }
+
+            if (this.player == 2) {
+              Board.score.player1 += 1;
+            }
+
+            Board.board[this.position[0]][this.position[1]] = 0;
+
+            //reset position so it doesn't get picked up by the for loop in the canOpponentJump method
+            this.position = [];
         }
 
         // Is it a valid move? (Is it within the gameboard size)
@@ -67,7 +90,7 @@ window.onload = function() {
             }
 
             if (Board.jumpExist && this.player == 1 && tile.position[0] == this.position[0] + 2 || tile.position[1] == this.position[1] + 2 || tile.position[1] == this.position[1] - 2) {
-                flag = true
+                flag = true   
             } else if (Board.jumpExist && this.player == 2 && tile.position[0] == this.position[0] - 2 || tile.position[1] == this.position[1] + 2 || tile.position[1] == this.position[1] - 2) {
                 flag = true
             } 
@@ -271,6 +294,9 @@ window.onload = function() {
                     if (x.upLeft(1) <= 12 || x.upRight(1) <= 12) {
                         if (x.upLeft(2) == 0 || x.upRight(2) == 0) {
                             console.log("A jump is possible!")
+                            if (pieces[pieceID-1].downLeft(2) == 0 || pieces[pieceID-1].downRight(2) == 0) {
+                                pieces[pieceID-1].canBeRemoved = true
+                            }
                             return true;
                         }
                     }
@@ -298,7 +324,7 @@ window.onload = function() {
     $('.piece').on("click", function () {
 
         selectedPieceID = $(this).attr("id").replace("tile","")
-        console.log("Piece ID = " + selectedPieceID)
+        //console.log("Piece ID = " + selectedPieceID)
 
         if (playerTurn == 1 && selectedPieceID <= 11) {
             // If piece with ID "id" and boolean allowedToMove = true, then ... 
@@ -343,11 +369,11 @@ window.onload = function() {
 
         // When tile is clicked, returns tile[#id], then replaces "tile" with "" to just give ID
         tileID = $(this).attr("id").replace("tile","");
-        console.log("Tile ID = " + tileID)
+        c//onsole.log("Tile ID = " + tileID)
 
         // This assigns the variable selectedTile to the specific Tile object that was clicked.
         selectedTile = tiles[tileID];
-        console.log("New Array Location " + selectedTile.position)
+        //console.log("New Array Location " + selectedTile.position)
 
         // This sets local variable piece to Piece object of the selected piece (Grab the id attribute)
         var piece = pieces[$('.selected').attr("id")];
