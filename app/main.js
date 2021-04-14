@@ -1,4 +1,3 @@
-
 // Load program on web browser load
 window.onload = function() {
     // Gameboard design. Every value > 0 = a checker piece and its respective ID
@@ -54,27 +53,38 @@ window.onload = function() {
             this.element.css("background-color", "purple")
         }
 
+        // Is it a valid move? (Is it within the gameboard size)
+        // Check if its a jump move and within restriction of jump move
+        // Check if its a regular move and within restriction of said move
+        // If either of the previous two is true, flag should be true and run the actual move part of code
         this.move = function(tile) {
 
+            var flag = false
             // This makes sure that the player is going in the correct direction if the piece
             // is not a king.
-            if (!Board.isValidMove(tile.position[0], tile.position[1]) && !jumpExist) {
+            if (!Board.isValidMove(tile.position[0], tile.position[1])) {
                 return false;
             }
-            
 
+            if (Board.jumpExist && this.player == 1 && tile.position[0] == this.position[0] + 2 || tile.position[1] == this.position[1] + 2 || tile.position[1] == this.position[1] - 2) {
+                flag = true
+            } else if (Board.jumpExist && this.player == 2 && tile.position[0] == this.position[0] - 2 || tile.position[1] == this.position[1] + 2 || tile.position[1] == this.position[1] - 2) {
+                flag = true
+            } 
 
-            // This makes sure the move is valid if the piece is not a king
-            if (this.player == 1 && !this.king) {
+            // Checks for regular moves 
+            if (this.player == 1 && !this.king && !Board.jumpExist) {
                 // If tile row # is less than or equal to its current position's row # and its NOT a king OR if the row number is greater than current row + 1
                 // * Its not allowed to move backwards and is cannot move more than 1 row down
-                if (tile.position[0] <= this.position[0] || tile.position[0] > [this.position[0] + 1] || tile.position[1] > [this.position[1] + 1] || tile.position[1] < [this.position[1] - 1]) 
-                    return false;
-            } else if (this.player == 2 && !this.king) {
+                if (tile.position[0] <= this.position[0] || tile.position[0] > this.position[0] + 1 || tile.position[1] > this.position[1] + 1 || tile.position[1] < [this.position[1] - 1]) {
+                    return false
+                }
+            } else if (this.player == 2 && !this.king && !Board.jumpExist) {
                 // If tile row # is greater or equal to than its current position's row # and its NOT a king OR if the row number is greater than current row - 1
                 // * Its not allowed to move backwards and it cannot move more than 1 row up
-                 if (tile.position[0] >= this.position[0] || tile.position[0] < [this.position[0] - 1] || tile.position[1] > [this.position[1] + 1] || tile.position[1] < [this.position[1] - 1]) 
-                    return false;
+                if (tile.position[0] >= this.position[0] || tile.position[0] < this.position[0] - 1 || tile.position[1] > this.position[1] + 1 || tile.position[1] < [this.position[1] - 1]) {
+                    return false 
+                }
             }
 
             var pieceID = Board.board[this.position[0]][this.position[1]];
@@ -90,11 +100,11 @@ window.onload = function() {
             
             //This changes the css using board's dictionary
             this.element.css('top', Board.dictionary[this.position[0]]);
-            this.element.css('left', Board.dictionary[this.position[1]]);
+            this.element.css('left', Board.dictionary[this.position[1]])
 
-            this.element.removeClass('selected');
+            this.element.removeClass('selected')
             isAnySelected = false
-            Board.changePlayerTurn();
+            Board.changePlayerTurn()
         }
 
         this.upLeft = function(y) {
@@ -118,7 +128,7 @@ window.onload = function() {
         this.downLeft = function(y) {
             let z = gameBoard[this.position[0] + y][this.position[1] - y]
             if(z) {
-                return z.id
+                return z
             } else {
                 return 0
             }
@@ -128,7 +138,7 @@ window.onload = function() {
             // gameBoard[0][1] = Piece object
             let z = gameBoard[this.position[0] + y][this.position[1] + y]
             if(z) {
-                return z.id
+                return z
             } else {
                 return 0
             }
@@ -250,8 +260,8 @@ window.onload = function() {
             }
 
             if (pieceID <= 12 && !x.isKing) { // This checks for jumps for player 1 (Red) pieces by checking if the gameBoard location == 0
-                if (x.downLeft(1) >= 13 || x.downRight(1) >= 13) {           
-                    if (x.downLeft(2)  || x.downRight(2) == 0) {
+                if (pieces[pieceID-1].downLeft(1) >= 13 || pieces[pieceID-1].downRight(1) >= 13) {           
+                    if (pieces[pieceID-1].downLeft(2) == 0 || pieces[pieceID-1].downRight(2) == 0) {
                         console.log("A jump is possible!")
                         return true;
                     }
