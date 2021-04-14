@@ -54,7 +54,7 @@ window.onload = function() {
             this.element.css("background-color", "purple")
         }
 
-        this.move = function(tile, pieceID) {
+        this.move = function(tile) {
 
             // This makes sure that the player is going in the correct direction if the piece
             // is not a king.
@@ -76,6 +76,8 @@ window.onload = function() {
                  if (tile.position[0] >= this.position[0] || tile.position[0] < [this.position[0] - 1] || tile.position[1] > [this.position[1] + 1] || tile.position[1] < [this.position[1] - 1]) 
                     return false;
             }
+
+            var pieceID = Board.board[this.position[0]][this.position[1]];
         
             // Sets the position in the 2D array to zero (= 0) so that the spot is now empty
             Board.board[this.position[0]][this.position[1]] = 0;
@@ -95,55 +97,40 @@ window.onload = function() {
             Board.changePlayerTurn();
         }
 
-        this.upLeft = function(x) {
-            return [this.position[0] - x][this.position[1] - x]
-        }
-
-        this.upRight = function(x) {
-            return [this.position[0] - x][this.position[1] + x]
-        }
-
-        this.downLeft = function(x) {
-            return [this.position[0] + x][this.position[1] - x]
-        }
-
-        this.downRight = function(x) {
-            return [this.position[0] + x][this.position[1] + x]
-        }
-
-        this.canJump = function(x) {
-
-            var pieceID = x.id
-            console.log(x.id)
-            
-            if(x.isKing) {
-                if (gameBoard[this.upLeft(1)] > 0 || gameBoard[this.upRight(1)] > 0 || gameBoard[this.downLeft(1)] > 0 || gameBoard[this.downRight(1)] > 0) {
-                    if (gameBoard[this.upRight(2)] == 0 || gameBoard[this.upLeft(2)] == 0 || gameBoard[this.downLeft(2)] == 0 || gameBoard[this.downRight(2)] == 0) {
-                        console.log("A jump is possible!")
-                        jumpExist = true;
-                        return true;
-                    }
-                }
-            }
-
-            if (selectedPieceID <= 11) { // This checks for jumps for player 1 (Red) pieces by checking if the gameBoard location == 0
-                if (gameBoard[this.upLeft(1)] > 0 || gameBoard[this.upRight(1)] > 0 || gameBoard[this.downLeft(1)] > 0 || gameBoard[this.downRight(1)] > 0) {
-                    if (gameBoard[this.downLeft(2)]  || gameBoard[this.downRight(2)] == 0) {
-                        console.log("A jump is possible!")
-                        jumpExist = true;
-                        return true;
-                    }
-                }
-            } else if (selectedPieceID >= 12) { // This checks for jumps for player 2 (Black) pieces
-                if (gameBoard[this.upLeft(1)] > 0 || gameBoard[this.upRight(1)] > 0 || gameBoard[this.downLeft(1)] > 0 || gameBoard[this.downRight(1)] > 0) {
-                    if (gameBoard[this.upLeft(2)]  || gameBoard[this.upRight(2)] == 0) {
-                        console.log("A jump is possible!")
-                        jumpExist = true;
-                        return true;
-                    }
-                }
+        this.upLeft = function(y) {
+            let z = gameBoard[this.position[0] - y][this.position[1] - y]
+            if(z) {
+                return z
             } else {
-                return true;
+                return 0
+            }
+        }
+
+        this.upRight = function(y) {
+            let z = gameBoard[this.position[0] - y][this.position[1] + y]
+            if(z) {
+                return z
+            } else {
+                return 0
+            }
+        }
+
+        this.downLeft = function(y) {
+            let z = gameBoard[this.position[0] + y][this.position[1] - y]
+            if(z) {
+                return z.id
+            } else {
+                return 0
+            }
+        }
+
+        this.downRight = function(y) {
+            // gameBoard[0][1] = Piece object
+            let z = gameBoard[this.position[0] + y][this.position[1] + y]
+            if(z) {
+                return z.id
+            } else {
+                return 0
             }
         }
     }
@@ -209,7 +196,7 @@ window.onload = function() {
         renderPlayerPieces: function(playerNumber, row, column, countPieces) {
             $(`.player${playerNumber}pieces`).append("<div class='piece' id='" + countPieces + "' style='top:" + this.dictionary[row] + ";left:" + this.dictionary[column] + ";'></div>");
             pieces[countPieces] = new Piece($("#" + countPieces), [parseInt(row), parseInt(column)]);
-            pieces[countPieces].id = countPieces;
+            pieces[countPieces].id = 1 + countPieces;
             return countPieces + 1;
           },
 
@@ -235,7 +222,7 @@ window.onload = function() {
 
                 // As its iterating through the array of Piece objects, if it finds a piece that is able to
                 // jump. It will set only those pieces to be allowed to move.
-                if(x.canJump(x)) {
+                if(this.canJump(x)) {
                     this.jumpExist = true
                     x.allowedToMove = true;
 
@@ -246,6 +233,38 @@ window.onload = function() {
             if(!this.jumpExist) {
                 for(let i of pieces)
                     i.allowedToMove = true;
+            }
+        },
+
+        canJump: function(x) {
+
+            var pieceID = x.id
+            
+            if(x.isKing) {
+                if (x.upLeft(1) > 0 || x.upRight(1) > 0 || x.downLeft(1) > 0 || x.downRight(1) > 0) {
+                    if (x.upRight(2) == 0 || x.upLeft(2) == 0 || x.downLeft(2) == 0 || x.downRight(2) == 0) {
+                        console.log("A jump is possible!")
+                        return true;
+                    }
+                }
+            }
+
+            if (pieceID <= 12 && !x.isKing) { // This checks for jumps for player 1 (Red) pieces by checking if the gameBoard location == 0
+                if (x.downLeft(1) >= 13 || x.downRight(1) >= 13) {           
+                    if (x.downLeft(2)  || x.downRight(2) == 0) {
+                        console.log("A jump is possible!")
+                        return true;
+                    }
+                }
+            } else if (pieceID >= 13 && !x.isKing) { // This checks for jumps for player 2 (Black) pieces
+                if (x.upLeft(1) <= 12 || x.upRight(1) <= 12) {
+                    if (x.upLeft(2) == 0 || x.upRight(2) == 0) {
+                        console.log("A jump is possible!")
+                        return true;
+                    }
+                }
+            } else {
+                return false;
             }
         },
 
@@ -267,7 +286,7 @@ window.onload = function() {
     $('.piece').on("click", function () {
 
         selectedPieceID = $(this).attr("id").replace("tile","")
-        console.log("Piece ID = " + selectedPieceID)
+        //console.log("Piece ID = " + selectedPieceID)
 
         if (playerTurn == 1 && selectedPieceID <= 11) {
             // If piece with ID "id" and boolean allowedToMove = true, then ... 
@@ -323,8 +342,7 @@ window.onload = function() {
         var pieceID = $('.selected').attr("id");
 
         // If the piece cannot jump, then its a reguar move
-        if (!piece.canJump(selectedTile, selectedPieceID))
-            piece.move(selectedTile, pieceID)
+        piece.move(selectedTile)
 
     });
 }
